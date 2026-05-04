@@ -1,0 +1,12 @@
+{{- if eq .chezmoi.os "windows" }}
+# Windows PowerShell profile
+
+# Aliases
+Set-Alias -Name which -Value Get-Command
+
+# Conda
+$CondaPath = "$env:USERPROFILE\anaconda3\Scripts\conda.exe"
+if (Test-Path $CondaPath) {
+    (& $CondaPath "shell.powershell" "hook") | Out-String | Invoke-Expression
+}
+{{- end }}

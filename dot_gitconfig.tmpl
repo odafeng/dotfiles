@@ -1,0 +1,12 @@
+[user]
+	email = {{ .email }}
+[core]
+{{- if eq .chezmoi.os "windows" }}
+	autocrlf = true
+{{- else }}
+	autocrlf = input
+{{- end }}
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
