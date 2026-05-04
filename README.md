@@ -8,31 +8,49 @@ Supports macOS, Linux, and Windows.
 
 | File | Description |
 |------|-------------|
-| `.gitconfig` | Git configuration (autocrlf per OS) |
-| `.zshrc` | Zsh config (macOS/Linux) |
-| `PowerShell/Microsoft.PowerShell_profile.ps1` | PowerShell profile (Windows) |
+| `.gitconfig` | Git configuration (name, email, autocrlf per OS) |
+| `.zshrc` | Zsh config (macOS/Linux, OS-specific PATH and aliases) |
+| `PowerShell/Microsoft.PowerShell_profile.ps1` | PowerShell profile (Windows only) |
 | `.claude/CLAUDE.md` | Claude Code global instructions |
 | `.claude/settings.json` | Claude Code settings |
 
 ## Setup on a new machine
 
+### macOS / Linux
+
 ```bash
-# Install chezmoi and apply dotfiles
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply <GITHUB_USERNAME> --source ~/dotfiles
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply odafeng --source ~/dotfiles
 ```
+
+### Windows (PowerShell)
+
+```powershell
+# Install chezmoi (choose one)
+winget install twpayne.chezmoi
+# or
+choco install chezmoi
+
+# Apply dotfiles
+chezmoi init --apply odafeng --source ~/dotfiles
+```
+
+First run will prompt for your email address.
 
 ## Daily usage
 
 ```bash
-# Pull latest and apply
-chezmoi update
-
-# Edit a managed file
+# Edit a managed file (edits the template in source dir)
 chezmoi edit ~/.zshrc
 
-# See what would change
+# See what would change before applying
 chezmoi diff
 
-# Apply changes
+# Apply changes to home directory
 chezmoi apply
+
+# Commit and push after editing
+cd ~/dotfiles && git add -A && git commit -m "update ..." && git push
+
+# On another machine, pull latest and apply
+chezmoi update
 ```
