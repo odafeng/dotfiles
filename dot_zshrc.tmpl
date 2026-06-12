@@ -34,6 +34,9 @@ export PATH="$HOME/.local/bin:$PATH"
 alias rd="bash ~/Desktop/System\ Scripts/research-dashboard.sh"
 alias slog='open "postgresql://huangshifeng@localhost/surgery_log"'
 alias bkup="bash ~/Desktop/System\ Scripts/backup_desktop_to_gdrive.sh"
+alias todo="bash ~/.todo/show-dashboard.sh"
+alias pelv="cd ~/Desktop/Research/Difficulty_Prediction/Auto_Pelvimetry_PyPI"
+alias vdi="bash ~/Desktop/System\ Scripts/connect-vdi.sh"
 {{- end }}
 
 # >>> conda initialize >>>
@@ -62,3 +65,7 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+{{ if eq .chezmoi.os "darwin" }}
+# 痔瘡AI衛教研究專案
+alias hemo="cd ~/Desktop/Research/AI_Clinical/痔瘡AI衛教 && claude --dangerously-skip-permissions"
+{{- end }}

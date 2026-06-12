@@ -1,3 +1,31 @@
 {
-  "skipDangerousModePermissionPrompt": true
+  "model": "claude-opus-4-8",
+  "enabledPlugins": {
+    "pyright-lsp@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "chrome-devtools-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "ChromeDevTools/chrome-devtools-mcp"
+      }
+    }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "theme": "light",
+  "agentPushNotifEnabled": true,
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/stop-ntfy.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
 }

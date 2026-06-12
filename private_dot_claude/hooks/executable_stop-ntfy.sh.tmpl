@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Claude Code Stop hook → ntfy 推播，推播前用地端 Ollama 生成 TL;DR。
+# 只在「最後一則 human prompt → 最後一則 assistant」時間差 >= threshold 才推播。
+
+input=$(cat)
+
+# ---- 可調參數 ----
+topic="{{ .ntfyTopic }}"
+server="https://ntfy.sh"
+threshold=120                       # 秒；任務短於此值不推播
+ollama_url="http://localhost:11434"
+ollama_model="qwen2.5:14b"
+# ------------------
+
+tp=$(jq -r '.transcript_path // ""' <<<"$input")
+
+# 算最後一輪耗時：last human prompt → last assistant
+dur=$(jq -rs '
+  (map(select(.type=="user" and ((.message.content|type)=="string" or (any(.message.content[]?; .type=="tool_result")|not)))) | last | .timestamp) as $u
+  | (map(select(.type=="assistant")) | last | .timestamp) as $a
+  | (($a|sub("\\.[0-9]+Z$";"Z")|fromdateiso8601) - ($u|sub("\\.[0-9]+Z$";"Z")|fromdateiso8601))
+' "$tp" 2>/dev/null)
+dur=${dur%%.*}; case "$dur" in ''|*[!0-9-]*) dur=0;; esac
+[ "$dur" -lt "$threshold" ] && exit 0
+
+sid=$(jq -r '.session_id // "unknown"' <<<"$input")
+cwd=$(jq -r '.cwd // ""' <<<"$input")
+proj=$(basename "${cwd:-$HOME}")
+
+# 抓最後一則含 text 的 assistant 訊息
+msg=$(jq -rs '
+  [.[] | select(.type=="assistant") | select(any(.message.content[]?; .type=="text"))]
+  | last | (.message.content // [])
+  | map(select(.type=="text") | .text) | join("\n")
+' "$tp" 2>/dev/null)
+[ -z "$msg" ] && msg="(session ended, no text)"
+
+# ---- 地端 TL;DR（失敗就 fallback 回原訊息）----
+tldr=""
+prompt=$(printf '用繁體中文把以下 Claude Code 結束訊息濃縮成一句 TL;DR（30 字以內），只輸出摘要本身，不要任何前綴、引號或標點開頭：\n\n%s' "$msg")
+payload=$(jq -n --arg m "$prompt" --arg model "$ollama_model" \
+  '{model:$model, prompt:$m, stream:false, keep_alive:"10m", options:{num_predict:100, temperature:0.3}}')
+tldr=$(curl -s --max-time 50 "$ollama_url/api/generate" -d "$payload" 2>/dev/null \
+  | jq -r '.response // ""' 2>/dev/null | tr -d '\r' | sed '/^[[:space:]]*$/d' | head -c 200)
+
+if [ -n "$tldr" ]; then
+  body=$(printf '**TL;DR**：%s\n\n---\n\n%s' "$tldr" "$msg")
+else
+  body="$msg"
+fi
+
+curl -s \
+  -H "Title: ${proj} | ${sid:0:8} (${dur}s)" \
+  -H "Tags: white_check_mark" \
+  -H "Markdown: yes" \
+  -d "$body" \
+  "${server}/${topic}" >/dev/null 2>&1 || true

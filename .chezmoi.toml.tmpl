@@ -1,4 +1,6 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $ntfyTopic := promptStringOnce . "ntfyTopic" "ntfy notification topic" -}}
 
 [data]
     email = {{ $email | quote }}
+    ntfyTopic = {{ $ntfyTopic | quote }}
