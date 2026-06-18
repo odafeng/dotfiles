@@ -1,7 +1,7 @@
 # Ghostty config (managed via dotfiles)
 font-family = JetBrainsMono Nerd Font
 font-size = 14
-theme = catppuccin-mocha
+theme = Catppuccin Mocha
 background-opacity = 0.96
 background-blur-radius = 20
 window-padding-x = 10

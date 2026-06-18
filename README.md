@@ -9,7 +9,8 @@ Supports macOS, Linux, and Windows.
 | File | Description |
 |------|-------------|
 | `.gitconfig` | Git configuration (name, email, autocrlf per OS) |
-| `.zshrc` | Zsh config (macOS/Linux, OS-specific PATH and aliases) |
+| `.zshrc` | Zsh config (macOS/Linux, OS-specific PATH and aliases; Powerlevel10k + macOS `rm`→trash) |
+| `.p10k.zsh` | Powerlevel10k prompt config (requires the theme, see below) |
 | `PowerShell/Microsoft.PowerShell_profile.ps1` | PowerShell profile (Windows only) |
 | `.claude/CLAUDE.md` | Claude Code global instructions |
 | `.claude/settings.json` | Claude Code settings (incl. custom status line) |
@@ -38,6 +39,18 @@ gh extension install dlvhdr/gh-dash
 | `git-delta` | git pager | via `.gitconfig` |
 | `btop` | `top` | — |
 | `ghostty` | terminal | — |
+
+## Powerlevel10k prompt
+
+`.zshrc` sets `ZSH_THEME="powerlevel10k/powerlevel10k"`. Install the theme as an
+oh-my-zsh custom theme on a new machine:
+
+```bash
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+  "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+```
+
+`.p10k.zsh` carries the prompt config; re-run `p10k configure` to regenerate.
 
 ## Setup on a new machine
 
