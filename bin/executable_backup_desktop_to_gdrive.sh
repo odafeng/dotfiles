@@ -63,8 +63,35 @@ say() {
   [ "$INTERACTIVE" = 1 ] && echo "$@"
 }
 
+# 備份失敗時用 ntfy 推播(沿用 Claude Code 的 topic)。
+# 標題用 ASCII、中文放內文，避開 HTTP header 的非 ASCII 編碼問題。
+NTFY_TOPIC="cc-odafeng-15sbdsbad260"
+NTFY_SERVER="https://ntfy.sh"
+notify() {  # $1=title(ASCII)  $2=message  $3=priority(預設 default)
+  curl -s --max-time 15 \
+    -H "Title: $1" \
+    -H "Priority: ${3:-default}" \
+    -H "Tags: floppy_disk" \
+    -d "$2" \
+    "$NTFY_SERVER/$NTFY_TOPIC" >/dev/null 2>&1 || true
+}
+
+# 防止重複執行:同時只允許一個備份，避免兩次 sync 互踩同一目的地(mkdir 為原子操作)。
+LOCK_DIR="$HOME/Library/Caches/backup_desktop.lock"
+if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+  if kill -0 "$(cat "$LOCK_DIR/pid" 2>/dev/null)" 2>/dev/null; then
+    say "另一個備份仍在執行(PID $(cat "$LOCK_DIR/pid"))，本次略過。"
+    exit 0
+  fi
+  say "發現陳舊的鎖(持鎖行程已不存在)，接管。"
+  command rm -rf "$LOCK_DIR"; mkdir "$LOCK_DIR"
+fi
+echo $$ > "$LOCK_DIR/pid"
+trap 'command rm -rf "$LOCK_DIR"' EXIT
+
 say "===== 備份開始: $(date '+%Y-%m-%d %H:%M:%S')  (versions→$STAMP) ====="
 
+FAILED=()  # 記錄 sync 失敗的來源，結尾若非空則推播
 for entry in "${SOURCES[@]}"; do
   src="${entry%%|*}"
   sub="${entry#*|}"
@@ -88,6 +115,11 @@ for entry in "${SOURCES[@]}"; do
     --transfers 8 \
     --checkers 16 \
     "${RCLONE_PROGRESS[@]}"
+  rc=$?
+  if [ "$rc" -ne 0 ]; then
+    say "  ⚠️ sync 失敗: $src (rc=$rc)"
+    FAILED+=("$src")
+  fi
 done
 
 # 清理 30 天前的舊版本快照，避免 Macbook_Backup_versions 無限膨脹。
@@ -110,3 +142,9 @@ say "===== 清理 ${RETAIN_DAYS} 天前舊版本快照 (cutoff=$CUTOFF_DIGITS): 
 done
 
 say "===== 備份完成: $(date '+%Y-%m-%d %H:%M:%S') ====="
+
+# 有任何來源 sync 失敗 → 推播(urgent 讓手機強震動)。
+if [ "${#FAILED[@]}" -gt 0 ]; then
+  say "===== ⚠️ 有 ${#FAILED[@]} 個來源備份失敗: ${FAILED[*]} ====="
+  notify "Backup FAILED" "備份失敗的來源：${FAILED[*]}（共 ${#FAILED[@]} 個，詳見 ~/Library/Logs/backup_desktop.log）" urgent
+fi
