@@ -1,6 +1,8 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $ntfyTopic := promptStringOnce . "ntfyTopic" "ntfy notification topic" -}}
 
+sourceDir = {{ printf "%s/Desktop/Projects/dotfiles" .chezmoi.homeDir | quote }}
+
 [data]
     email = {{ $email | quote }}
     ntfyTopic = {{ $ntfyTopic | quote }}
