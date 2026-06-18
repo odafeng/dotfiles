@@ -9,8 +9,8 @@
 # 注意：~/.ssh 私鑰刻意「不」納入(避免明文上雲)，靠 Time Machine 等本機備份保護。
 
 LOG_FILE="$HOME/Library/Logs/backup_desktop.log"
-DEST_ROOT="gdrive:Macbook_Backup"
-VERS_ROOT="gdrive:Macbook_Backup_versions"
+DEST_ROOT="gcrypt:Macbook_Backup"
+VERS_ROOT="gcrypt:Macbook_Backup_versions"
 STAMP="$(date '+%Y-%m-%d_%H%M%S')"
 
 # 要備份的來源；格式 "本機路徑|雲端子路徑"。子路徑留空 = 備到 Macbook_Backup 根(桌面)。
