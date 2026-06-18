@@ -12,7 +12,32 @@ Supports macOS, Linux, and Windows.
 | `.zshrc` | Zsh config (macOS/Linux, OS-specific PATH and aliases) |
 | `PowerShell/Microsoft.PowerShell_profile.ps1` | PowerShell profile (Windows only) |
 | `.claude/CLAUDE.md` | Claude Code global instructions |
-| `.claude/settings.json` | Claude Code settings |
+| `.claude/settings.json` | Claude Code settings (incl. custom status line) |
+| `.claude/statusline/statusline.js` | Claude Code status line renderer |
+| `.config/ghostty/config` | Ghostty terminal config |
+
+## CLI/TUI toolset
+
+Modern terminal tools wired into `.zshrc` (each guarded by `command -v`, so the
+config is safe on machines where a tool isn't installed). Install them with:
+
+```bash
+brew bundle --file=Brewfile      # see Brewfile for the list
+gh extension install dlvhdr/gh-dash
+```
+
+| Tool | Replaces / adds | Shell hook |
+|------|-----------------|------------|
+| `eza` | `ls` | aliases `ls`/`ll`/`la`/`lt` |
+| `bat` | `cat` | `catp`, `BAT_THEME` |
+| `zoxide` | `cd` | `z` / `zi` |
+| `atuin` | history | Ctrl-R, ↑ |
+| `lazygit` | git TUI | `lg` |
+| `lazydocker` | docker TUI | `lzd` |
+| `gh dash` | PR/issue dashboard | `ghd` |
+| `git-delta` | git pager | via `.gitconfig` |
+| `btop` | `top` | — |
+| `ghostty` | terminal | — |
 
 ## Setup on a new machine
 
