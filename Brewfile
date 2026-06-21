@@ -11,3 +11,4 @@ brew "btop"         # system monitor
 brew "lazydocker"   # docker TUI
 brew "gh"           # GitHub CLI (gh dash via: gh extension install dlvhdr/gh-dash)
 cask "ghostty"      # GPU terminal
+cask "claude-code"  # Claude Code CLI (provides `claude`; plugins rebuilt by run_onchange script)
