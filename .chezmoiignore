@@ -9,3 +9,6 @@ Documents/
 .zshrc
 {{- end }}
 Brewfile
+
+# Claude Code plugin caches/state — large & machine-specific, rebuilt by run_onchange script
+.claude/plugins/

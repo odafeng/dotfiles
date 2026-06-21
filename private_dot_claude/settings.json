@@ -1,20 +1,5 @@
 {
   "model": "claude-opus-4-8",
-  "enabledPlugins": {
-    "pyright-lsp@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "chrome-devtools-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "ChromeDevTools/chrome-devtools-mcp"
-      }
-    }
-  },
-  "skipDangerousModePermissionPrompt": true,
-  "skipWorkflowUsageWarning": true,
-  "theme": "light",
-  "agentPushNotifEnabled": true,
   "hooks": {
     "Stop": [
       {
@@ -22,15 +7,57 @@
           {
             "type": "command",
             "command": "bash ~/.claude/hooks/stop-ntfy.sh",
-            "timeout": 60
+            "timeout": 90
           }
         ]
       }
     ]
   },
+  "disableRemoteControl": false,
   "statusLine": {
     "type": "command",
     "command": "node ~/.claude/statusline/statusline.js",
     "padding": 0
-  }
+  },
+  "enabledPlugins": {
+    "pyright-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true,
+    "cybersecurity-skills@anthropic-cybersecurity-skills": true,
+    "document-skills@anthropic-agent-skills": true,
+    "example-skills@anthropic-agent-skills": true,
+    "claude-api@anthropic-agent-skills": true,
+    "duckdb-skills@claude-plugins-official": true,
+    "nvidia-skills@claude-plugins-official": true,
+    "huggingface-skills@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "chrome-devtools-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "ChromeDevTools/chrome-devtools-mcp"
+      }
+    },
+    "anthropic-cybersecurity-skills": {
+      "source": {
+        "source": "github",
+        "repo": "mukul975/Anthropic-Cybersecurity-Skills"
+      }
+    },
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "theme": "light",
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true
 }
